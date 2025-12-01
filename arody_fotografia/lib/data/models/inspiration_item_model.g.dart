@@ -13,7 +13,8 @@ InspirationItemModel _$InspirationItemModelFromJson(
   category: json['category'] as String,
   title: json['title'] as String?,
   description: json['description'] as String?,
-  imageUrl: json['imageUrl'] as String,
+  imageUrl: json['image_url'] as String,
+  createdAt: DateTime.parse(json['created_at'] as String),
 );
 
 Map<String, dynamic> _$InspirationItemModelToJson(
@@ -23,5 +24,6 @@ Map<String, dynamic> _$InspirationItemModelToJson(
   'category': instance.category,
   'title': instance.title,
   'description': instance.description,
-  'imageUrl': instance.imageUrl,
+  'image_url': instance.imageUrl,
+  'created_at': instance.createdAt.toIso8601String(),
 };

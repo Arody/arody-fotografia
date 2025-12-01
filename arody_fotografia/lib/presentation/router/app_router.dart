@@ -7,7 +7,6 @@ import '../../domain/entities/inspiration_item.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
 import '../screens/booking/booking_screen.dart';
-import '../screens/calendar/calendar_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/inspiration/inspiration_detail_screen.dart';
 import '../screens/inspiration/inspiration_screen.dart';
@@ -74,10 +73,6 @@ GoRouter goRouter(Ref ref) {
             },
           ),
         ],
-      ),
-      GoRoute(
-        path: '/calendar',
-        builder: (context, state) => const CalendarScreen(),
       ),
       GoRoute(
         path: '/booking',

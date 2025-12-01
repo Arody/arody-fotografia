@@ -34,11 +34,6 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => context.push('/calendar'),
-              child: const Text('Calendario'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
               onPressed: () => context.push('/booking'),
               child: const Text('Reservar Sesión'),
             ),

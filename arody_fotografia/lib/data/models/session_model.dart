@@ -3,14 +3,14 @@ import '../../domain/entities/session.dart';
 
 part 'session_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class SessionModel extends Session {
   const SessionModel({
     required super.id,
-    @JsonKey(name: 'client_id') required super.clientId,
-    @JsonKey(name: 'session_date') required super.sessionDate,
+    required super.clientId,
+    required super.sessionDate,
     super.location,
-    @JsonKey(name: 'session_type') required super.sessionType,
+    required super.sessionType,
     required super.status,
     super.notes,
   });

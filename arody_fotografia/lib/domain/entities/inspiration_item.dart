@@ -6,6 +6,7 @@ class InspirationItem extends Equatable {
   final String? title;
   final String? description;
   final String imageUrl;
+  final DateTime createdAt;
 
   const InspirationItem({
     required this.id,
@@ -13,8 +14,16 @@ class InspirationItem extends Equatable {
     this.title,
     this.description,
     required this.imageUrl,
+    required this.createdAt,
   });
 
   @override
-  List<Object?> get props => [id, category, title, description, imageUrl];
+  List<Object?> get props => [
+    id,
+    category,
+    title,
+    description,
+    imageUrl,
+    createdAt,
+  ];
 }

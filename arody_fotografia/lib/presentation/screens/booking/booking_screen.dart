@@ -19,9 +19,16 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
   final _notesController = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
-  String _selectedType = 'portrait';
+  String _selectedType = 'retratos';
 
-  final List<String> _sessionTypes = ['portrait', 'wedding', 'event', 'product', 'family'];
+  final List<String> _sessionTypes = [
+    'retratos',
+    'boda',
+    'cumpleaños',
+    'producto',
+    'familiar',
+    'evento empresarial',
+  ];
 
   @override
   void dispose() {

@@ -8,31 +8,31 @@ part of 'payment_model.dart';
 
 PaymentModel _$PaymentModelFromJson(Map<String, dynamic> json) => PaymentModel(
   id: json['id'] as String,
-  clientId: json['clientId'] as String,
-  sessionId: json['sessionId'] as String?,
+  clientId: json['client_id'] as String,
+  sessionId: json['session_id'] as String?,
   amount: (json['amount'] as num).toDouble(),
   currency: json['currency'] as String,
   status: json['status'] as String,
-  paymentDate: json['paymentDate'] == null
+  paymentDate: json['payment_date'] == null
       ? null
-      : DateTime.parse(json['paymentDate'] as String),
-  dueDate: json['dueDate'] == null
+      : DateTime.parse(json['payment_date'] as String),
+  dueDate: json['due_date'] == null
       ? null
-      : DateTime.parse(json['dueDate'] as String),
+      : DateTime.parse(json['due_date'] as String),
   description: json['description'] as String?,
-  createdAt: DateTime.parse(json['createdAt'] as String),
+  createdAt: DateTime.parse(json['created_at'] as String),
 );
 
 Map<String, dynamic> _$PaymentModelToJson(PaymentModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'clientId': instance.clientId,
-      'sessionId': instance.sessionId,
+      'client_id': instance.clientId,
+      'session_id': instance.sessionId,
       'amount': instance.amount,
       'currency': instance.currency,
       'status': instance.status,
-      'paymentDate': instance.paymentDate?.toIso8601String(),
-      'dueDate': instance.dueDate?.toIso8601String(),
+      'payment_date': instance.paymentDate?.toIso8601String(),
+      'due_date': instance.dueDate?.toIso8601String(),
       'description': instance.description,
-      'createdAt': instance.createdAt.toIso8601String(),
+      'created_at': instance.createdAt.toIso8601String(),
     };
