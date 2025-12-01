@@ -13,6 +13,7 @@ import '../screens/inspiration/inspiration_detail_screen.dart';
 import '../screens/inspiration/inspiration_screen.dart';
 import '../screens/sessions/session_detail_screen.dart';
 import '../screens/sessions/sessions_list_screen.dart';
+import '../screens/payments/payments_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -81,6 +82,10 @@ GoRouter goRouter(Ref ref) {
       GoRoute(
         path: '/booking',
         builder: (context, state) => const BookingScreen(),
+      ),
+      GoRoute(
+        path: '/payments',
+        builder: (context, state) => const PaymentsScreen(),
       ),
     ],
   );

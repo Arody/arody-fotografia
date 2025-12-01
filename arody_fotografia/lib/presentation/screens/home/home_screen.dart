@@ -42,6 +42,11 @@ class HomeScreen extends StatelessWidget {
               onPressed: () => context.push('/booking'),
               child: const Text('Reservar Sesión'),
             ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => context.push('/payments'),
+              child: const Text('Pagos'),
+            ),
           ],
         ),
       ),
