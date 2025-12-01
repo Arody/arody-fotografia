@@ -13,6 +13,7 @@ class SessionModel extends Session {
     required super.sessionType,
     required super.status,
     super.notes,
+    super.createdAt,
   });
 
   factory SessionModel.fromJson(Map<String, dynamic> json) => _$SessionModelFromJson(json);

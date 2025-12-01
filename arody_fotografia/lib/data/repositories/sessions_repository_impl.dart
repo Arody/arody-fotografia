@@ -36,6 +36,11 @@ class SessionsRepositoryImpl implements SessionsRepository {
   @override
   Future<void> createSession(Session session) async {
     final sessionModel = session as SessionModel;
-    await _supabaseClient.from('sessions').insert(sessionModel.toJson());
+    final json = sessionModel.toJson();
+    
+    // Remover el ID para que Supabase lo genere automáticamente
+    json.remove('id');
+    
+    await _supabaseClient.from('sessions').insert(json);
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
 import '../../../data/models/session_model.dart';
 import '../../providers/sessions_provider.dart';
 
@@ -17,6 +16,7 @@ class BookingScreen extends ConsumerStatefulWidget {
 class _BookingScreenState extends ConsumerState<BookingScreen> {
   final _formKey = GlobalKey<FormState>();
   final _notesController = TextEditingController();
+  final _locationController = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   String _selectedType = 'retratos';
@@ -33,6 +33,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
   @override
   void dispose() {
     _notesController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -84,22 +85,17 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
       if (userId == null) return;
 
       final newSession = SessionModel(
-        id: const Uuid().v4(),
+        id: '', // Será generado por Supabase
         clientId: userId,
         sessionDate: sessionDateTime,
+        location: _locationController.text.isEmpty ? null : _locationController.text,
         sessionType: _selectedType,
         status: 'planned',
         notes: _notesController.text.isEmpty ? null : _notesController.text,
+        createdAt: null, // Será generado por Supabase
       );
 
       await ref.read(createSessionProvider.notifier).create(newSession);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sesión solicitada con éxito')),
-        );
-        context.pop();
-      }
     }
   }
 
@@ -107,6 +103,28 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(createSessionProvider);
     final dateFormat = DateFormat('d MMM, yyyy', 'es');
+
+    ref.listen<AsyncValue<void>>(createSessionProvider, (previous, next) {
+      next.whenOrNull(
+        data: (_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sesión solicitada con éxito'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          context.pop();
+        },
+        error: (error, stackTrace) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${error.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+      );
+    });
 
     return Scaffold(
       appBar: AppBar(title: const Text('Reservar Sesión')),
@@ -117,7 +135,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
           child: ListView(
             children: [
               DropdownButtonFormField<String>(
-                value: _selectedType,
+                initialValue: _selectedType,
                 decoration: const InputDecoration(labelText: 'Tipo de Sesión'),
                 items: _sessionTypes.map((String type) {
                   return DropdownMenuItem<String>(
@@ -148,6 +166,15 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                 onTap: () => _selectTime(context),
               ),
               const Divider(),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _locationController,
+                decoration: const InputDecoration(
+                  labelText: 'Ubicación (Opcional)',
+                  hintText: 'Ej: Parque Central, Estudio, etc.',
+                ),
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _notesController,
                 decoration: const InputDecoration(labelText: 'Notas (Opcional)'),

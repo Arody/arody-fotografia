@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/entities/inspiration_item.dart';
+import '../screens/account/account_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
 import '../screens/booking/booking_screen.dart';
@@ -13,6 +14,7 @@ import '../screens/inspiration/inspiration_screen.dart';
 import '../screens/sessions/session_detail_screen.dart';
 import '../screens/sessions/sessions_list_screen.dart';
 import '../screens/payments/payments_screen.dart';
+import '../screens/profile/profile_setup_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -81,6 +83,14 @@ GoRouter goRouter(Ref ref) {
       GoRoute(
         path: '/payments',
         builder: (context, state) => const PaymentsScreen(),
+      ),
+      GoRoute(
+        path: '/profile-setup',
+        builder: (context, state) => const ProfileSetupScreen(),
+      ),
+      GoRoute(
+        path: '/account',
+        builder: (context, state) => const AccountScreen(),
       ),
     ],
   );

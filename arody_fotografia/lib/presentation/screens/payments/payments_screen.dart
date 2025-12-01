@@ -119,7 +119,7 @@ class PaymentCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: statusColor.withOpacity(0.2),
+          backgroundColor: statusColor.withValues(alpha: 0.2),
           child: Icon(Icons.attach_money, color: statusColor),
         ),
         title: Text(payment.description ?? 'Pago de Sesión'),

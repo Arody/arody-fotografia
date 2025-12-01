@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -13,35 +14,49 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isLoading = false;
 
   Future<void> _signIn() async {
-    setState(() => _isLoading = true);
-    try {
-      await Supabase.instance.client.auth.signInWithPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor completa todos los campos'),
+          backgroundColor: Colors.red,
+        ),
       );
-      // Navigation is handled by the router listener
-    } on AuthException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message), backgroundColor: Colors.red),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Unexpected error occurred'), backgroundColor: Colors.red),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+      return;
     }
+
+    await ref.read(signInProvider.notifier).signIn(email, password);
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final signInState = ref.watch(signInProvider);
+
+    ref.listen<AsyncValue<void>>(signInProvider, (previous, next) {
+      next.whenOrNull(
+        error: (error, stackTrace) {
+          String message = 'Ocurrió un error inesperado';
+          if (error is AuthException) {
+            message = error.message;
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message), backgroundColor: Colors.red),
+          );
+        },
+      );
+    });
+
     return Scaffold(
       appBar: AppBar(title: const Text('Iniciar Sesión')),
       body: Padding(
@@ -53,15 +68,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Correo Electrónico'),
               keyboardType: TextInputType.emailAddress,
+              enabled: !signInState.isLoading,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
               decoration: const InputDecoration(labelText: 'Contraseña'),
               obscureText: true,
+              enabled: !signInState.isLoading,
+              onSubmitted: (_) => _signIn(),
             ),
             const SizedBox(height: 24),
-            if (_isLoading)
+            if (signInState.isLoading)
               const CircularProgressIndicator()
             else
               ElevatedButton(
