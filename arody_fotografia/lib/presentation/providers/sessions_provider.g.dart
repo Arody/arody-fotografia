@@ -42,6 +42,24 @@ final sessionsListProvider = AutoDisposeFutureProvider<List<Session>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SessionsListRef = AutoDisposeFutureProviderRef<List<Session>>;
+String _$allSessionsListHash() => r'50a5607e1e401c0ecdb864850380f80a6bf08799';
+
+/// See also [allSessionsList].
+@ProviderFor(allSessionsList)
+final allSessionsListProvider =
+    AutoDisposeFutureProvider<List<Session>>.internal(
+      allSessionsList,
+      name: r'allSessionsListProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$allSessionsListHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AllSessionsListRef = AutoDisposeFutureProviderRef<List<Session>>;
 String _$sessionDetailHash() => r'67a2e483f3db0140288cf2486ba67b2b5d665489';
 
 /// Copied from Dart SDK

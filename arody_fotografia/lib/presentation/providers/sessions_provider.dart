@@ -19,6 +19,12 @@ Future<List<Session>> sessionsList(Ref ref) async {
 }
 
 @riverpod
+Future<List<Session>> allSessionsList(Ref ref) async {
+  final repository = ref.watch(sessionsRepositoryProvider);
+  return repository.getAllSessions();
+}
+
+@riverpod
 Future<Session> sessionDetail(Ref ref, String id) async {
   final repository = ref.watch(sessionsRepositoryProvider);
   return repository.getSessionById(id);

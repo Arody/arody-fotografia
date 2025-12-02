@@ -5,6 +5,7 @@ class Profile extends Equatable {
   final String? fullName;
   final String? phoneNumber;
   final String? preferredContactMethod;
+  final String role;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -13,9 +14,13 @@ class Profile extends Equatable {
     this.fullName,
     this.phoneNumber,
     this.preferredContactMethod,
+    this.role = 'client',
     this.createdAt,
     this.updatedAt,
   });
+
+  bool get isAdmin => role == 'super_admin';
+  bool get isClient => role == 'client';
 
   @override
   List<Object?> get props => [
@@ -23,6 +28,7 @@ class Profile extends Equatable {
         fullName,
         phoneNumber,
         preferredContactMethod,
+        role,
         createdAt,
         updatedAt,
       ];

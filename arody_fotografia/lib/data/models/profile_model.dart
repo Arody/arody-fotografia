@@ -10,6 +10,7 @@ class ProfileModel extends Profile {
     super.fullName,
     super.phoneNumber,
     super.preferredContactMethod,
+    super.role = 'client',
     super.createdAt,
     super.updatedAt,
   });

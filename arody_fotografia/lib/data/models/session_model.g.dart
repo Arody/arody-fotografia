@@ -17,6 +17,7 @@ SessionModel _$SessionModelFromJson(Map<String, dynamic> json) => SessionModel(
   createdAt: json['created_at'] == null
       ? null
       : DateTime.parse(json['created_at'] as String),
+  clientName: json['client_name'] as String?,
 );
 
 Map<String, dynamic> _$SessionModelToJson(SessionModel instance) =>
@@ -29,4 +30,5 @@ Map<String, dynamic> _$SessionModelToJson(SessionModel instance) =>
       'status': instance.status,
       'notes': instance.notes,
       'created_at': instance.createdAt?.toIso8601String(),
+      'client_name': instance.clientName,
     };

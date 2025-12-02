@@ -107,6 +107,17 @@ class SessionCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 2),
+                        if (session.clientName != null) ...[
+                          Text(
+                            session.clientName!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppTheme.accentColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                        ],
                         Text(
                           dateFormat.format(session.sessionDate),
                           style: TextStyle(

@@ -27,6 +27,20 @@ dependencies:
   flutter_staggered_grid_view: ^0.7.0
   table_calendar: ^3.2.0
   uuid: ^4.5.2
+  
+  # Images
+  cached_network_image: ^3.3.1
+  photo_view: ^0.15.0
+  http: ^1.2.2
+  path_provider: ^2.1.4
+  permission_handler: ^11.3.1
+  image_gallery_saver: ^2.0.3
+  
+  # File Management & Image Processing
+  file_picker: ^8.1.4
+  image: ^4.3.0
+  flutter_image_compress: ^2.3.0
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
@@ -36,6 +50,34 @@ dev_dependencies:
   riverpod_generator: ^2.6.3
   build_runner: ^2.4.13
   json_serializable: ^6.9.0
+  flutter_native_splash: ^2.4.3
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/
+
+# Configuración del splash screen nativo
+flutter_native_splash:
+  # Color de fondo del splash (negro como el primaryColor)
+  color: "#000000"
+  color_dark: "#000000"
+  
+  # Si tienes un logo, descomenta y agrega la ruta:
+  # image: assets/images/splash_logo.png
+  # image_dark: assets/images/splash_logo.png
+  
+  # Configuración para Android 12+
+  android_12:
+    color: "#000000"
+    # icon_background_color: "#00B074"  # Color del accentColor
+    # Si tienes logo, descomenta:
+    # image: assets/images/splash_logo.png
+  
+  # Fullscreen mode
+  fullscreen: true
+  
+  # Plataformas habilitadas
+  android: true
+  ios: true
+  web: true

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../providers/auth_provider.dart';
 import '../providers/profile_provider.dart';
+import '../providers/current_profile_provider.dart';
 
 class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
@@ -12,6 +13,7 @@ class AppDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
     final profileAsync = ref.watch(userProfileProvider);
+    final isAdminAsync = ref.watch(isCurrentUserAdminProvider);
 
     return Drawer(
       child: SafeArea(
@@ -98,44 +100,72 @@ class AppDrawer extends ConsumerWidget {
             
             // Menu items
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                children: [
-                  _DrawerItem(
-                    icon: Icons.person_outline,
-                    title: 'Mi Cuenta',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.push('/account');
-                    },
-                  ),
-                  const Divider(height: 1, indent: 16, endIndent: 16),
-                  _DrawerItem(
-                    icon: Icons.photo_library_outlined,
-                    title: 'Mis Sesiones',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.push('/sessions');
-                    },
-                  ),
-                  _DrawerItem(
-                    icon: Icons.payment_outlined,
-                    title: 'Mis Pagos',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.push('/payments');
-                    },
-                  ),
-                  const Divider(height: 1, indent: 16, endIndent: 16),
-                  _DrawerItem(
-                    icon: Icons.help_outline,
-                    title: 'Ayuda y Soporte',
-                    onTap: () {
-                      // TODO: Implementar ayuda
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+              child: isAdminAsync.when(
+                data: (isAdmin) => ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  children: [
+                    if (isAdmin) ...[
+                      _DrawerItem(
+                        icon: Icons.admin_panel_settings,
+                        title: 'Sesiones Clientes',
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.push('/sessions');
+                        },
+                      ),
+                      const Divider(height: 1, indent: 16, endIndent: 16),
+                    ] else ...[
+                      _DrawerItem(
+                        icon: Icons.person_outline,
+                        title: 'Mi Cuenta',
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.push('/account');
+                        },
+                      ),
+                      const Divider(height: 1, indent: 16, endIndent: 16),
+                      _DrawerItem(
+                        icon: Icons.photo_library_outlined,
+                        title: 'Mis Sesiones',
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.push('/sessions');
+                        },
+                      ),
+                      _DrawerItem(
+                        icon: Icons.payment_outlined,
+                        title: 'Mis Pagos',
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.push('/payments');
+                        },
+                      ),
+                      const Divider(height: 1, indent: 16, endIndent: 16),
+                    ],
+                    _DrawerItem(
+                      icon: Icons.help_outline,
+                      title: 'Ayuda y Soporte',
+                      onTap: () {
+                        // TODO: Implementar ayuda
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (_, __) => ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  children: [
+                    _DrawerItem(
+                      icon: Icons.person_outline,
+                      title: 'Mi Cuenta',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/account');
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             
@@ -166,20 +196,24 @@ class AppDrawer extends ConsumerWidget {
   }
 
   void _showLogoutDialog(BuildContext context, WidgetRef ref) {
+    // Capturar el notifier ANTES de abrir el diálogo
+    final signOutNotifier = ref.read(signOutProvider.notifier);
+    
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Cerrar Sesión'),
         content: const Text('¿Estás seguro que deseas cerrar sesión?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
-              ref.read(signOutProvider.notifier).signOut();
+              Navigator.pop(dialogContext);
+              // Usar el notifier capturado en lugar de ref.read()
+              signOutNotifier.signOut();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.errorColor,

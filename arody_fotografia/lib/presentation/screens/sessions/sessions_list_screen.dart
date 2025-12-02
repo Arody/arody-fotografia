@@ -4,36 +4,76 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../common/session_card.dart';
 import '../../providers/sessions_provider.dart';
+import '../../providers/current_profile_provider.dart';
 
 class SessionsListScreen extends ConsumerWidget {
   const SessionsListScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sessionsAsync = ref.watch(sessionsListProvider);
+    final isAdminAsync = ref.watch(isCurrentUserAdminProvider);
     final now = DateTime.now();
 
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
-      appBar: AppBar(
-        title: const Text('Mis Sesiones'),
-        actions: [
-          IconButton(
-            onPressed: () => context.push('/booking'),
-            icon: const Icon(Icons.add),
-            tooltip: 'Nueva Sesión',
+    return isAdminAsync.when(
+      data: (isAdmin) {
+        final sessionsAsync = isAdmin
+            ? ref.watch(allSessionsListProvider)
+            : ref.watch(sessionsListProvider);
+
+        return Scaffold(
+          backgroundColor: AppTheme.backgroundColor,
+          appBar: AppBar(
+            title: Text(isAdmin ? 'Todas las Sesiones' : 'Mis Sesiones'),
+            actions: [
+              if (!isAdmin)
+                IconButton(
+                  onPressed: () => context.push('/booking'),
+                  icon: const Icon(Icons.add),
+                  tooltip: 'Nueva Sesión',
+                ),
+              if (isAdmin)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.orange),
+                      ),
+                      child: const Text(
+                        'ADMIN',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          ref.invalidate(sessionsListProvider);
-        },
-        child: sessionsAsync.when(
-          data: (sessions) {
-            if (sessions.isEmpty) {
-              return _EmptyState(onBooking: () => context.push('/booking'));
-            }
+          body: RefreshIndicator(
+            onRefresh: () async {
+              if (isAdmin) {
+                ref.invalidate(allSessionsListProvider);
+              } else {
+                ref.invalidate(sessionsListProvider);
+              }
+            },
+            child: sessionsAsync.when(
+              data: (sessions) {
+                if (sessions.isEmpty) {
+                  return _EmptyState(
+                    onBooking: () => context.push('/booking'),
+                    isAdmin: isAdmin,
+                  );
+                }
 
             final futureSessions = sessions
                 .where((s) => s.sessionDate.isAfter(now))
@@ -42,16 +82,16 @@ class SessionsListScreen extends ConsumerWidget {
                 .where((s) => s.sessionDate.isBefore(now))
                 .toList();
 
-            return CustomScrollView(
-              slivers: [
-                if (futureSessions.isNotEmpty) ...[
+                return CustomScrollView(
+                  slivers: [
+                    if (futureSessions.isNotEmpty) ...[
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
+                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
                       child: Row(
                         children: [
                           const Text(
-                            'Próximas',
+                                'Próximas',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -195,13 +235,29 @@ class SessionsListScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => ref.invalidate(sessionsListProvider),
+                    onPressed: () {
+                      if (isAdmin) {
+                        ref.invalidate(allSessionsListProvider);
+                      } else {
+                        ref.invalidate(sessionsListProvider);
+                      }
+                    },
                     child: const Text('Reintentar'),
                   ),
                 ],
               ),
             ),
           ),
+            ),
+          ),
+        );
+      },
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => const Scaffold(
+        body: Center(
+          child: Text('Error al verificar permisos'),
         ),
       ),
     );
@@ -210,8 +266,12 @@ class SessionsListScreen extends ConsumerWidget {
 
 class _EmptyState extends StatelessWidget {
   final VoidCallback onBooking;
+  final bool isAdmin;
 
-  const _EmptyState({required this.onBooking});
+  const _EmptyState({
+    required this.onBooking,
+    this.isAdmin = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +305,9 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Comienza reservando tu primera sesión fotográfica',
+              isAdmin 
+                  ? 'No hay sesiones registradas en el sistema'
+                  : 'Comienza reservando tu primera sesión fotográfica',
               style: TextStyle(
                 fontSize: 14,
                 color: AppTheme.textSecondary,
@@ -254,11 +316,12 @@ class _EmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: onBooking,
-              icon: const Icon(Icons.add),
-              label: const Text('Reservar Sesión'),
-            ),
+            if (!isAdmin)
+              ElevatedButton.icon(
+                onPressed: onBooking,
+                icon: const Icon(Icons.add),
+                label: const Text('Reservar Sesión'),
+              ),
           ],
         ),
       ),
