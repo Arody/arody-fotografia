@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../common/quote_calculator_card.dart';
+import '../../providers/quote_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../data/models/session_model.dart';
 import '../../providers/sessions_provider.dart';
@@ -49,6 +51,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
       setState(() {
         _selectedDate = picked;
       });
+      ref.read(quoteProvider.notifier).setDate(picked);
     }
   }
 
@@ -173,12 +176,23 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                   labelText: 'Ubicación (Opcional)',
                   hintText: 'Ej: Parque Central, Estudio, etc.',
                 ),
+                onChanged: (_) {},
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _notesController,
                 decoration: const InputDecoration(labelText: 'Notas (Opcional)'),
                 maxLines: 3,
+              ),
+              const SizedBox(height: 24),
+              QuoteCalculatorCard(
+                availableLocations: const [
+                  'Tuxtla',
+                  'San Cristóbal',
+                  'Comitán',
+                  'Palenque',
+                  'Puerto Arista',
+                ],
               ),
               const SizedBox(height: 24),
               if (state.isLoading)
