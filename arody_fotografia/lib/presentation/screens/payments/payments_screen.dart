@@ -16,7 +16,7 @@ class PaymentsScreen extends ConsumerWidget {
       body: paymentsAsync.when(
         data: (payments) {
           if (payments.isEmpty) {
-            return const Center(child: Text('No hay pagos registrados.'));
+            return const Center(child: Text('En construcción.'));
           }
 
           // Calculate totals

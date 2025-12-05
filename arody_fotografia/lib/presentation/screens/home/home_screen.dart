@@ -158,27 +158,6 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       ),
                       
-                      const SizedBox(height: 32),
-                      // Additional Actions
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          children: [
-                            _MenuTile(
-                              icon: Icons.payment,
-                              title: 'Mis Pagos',
-                              onTap: () => context.push('/payments'),
-                            ),
-                            const SizedBox(height: 12),
-                            _MenuTile(
-                              icon: Icons.photo_library,
-                              title: 'Todas mis Sesiones',
-                              onTap: () => context.push('/sessions'),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 32),
                     ],
                   ),
                 ),
